@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ContactManager.Controllers
 {
+    [ApiController]
     [Route("[controller]")]
     public class ContactController : Controller
     {
