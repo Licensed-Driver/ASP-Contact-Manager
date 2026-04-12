@@ -1,3 +1,6 @@
 <Solution>
   <Project Path="ContactManager/ContactManager.csproj" />
+  <Project Path="Tests/Tests.csproj">
+    <BuildDependency Project="ContactManager/ContactManager.csproj" />
+  </Project>
 </Solution>
