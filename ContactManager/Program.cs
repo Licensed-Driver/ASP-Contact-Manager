@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IContactService, ContactService>();
+builder.Services.AddSingleton<IDocumentService, DocumentService>();
 
 var app = builder.Build();
 

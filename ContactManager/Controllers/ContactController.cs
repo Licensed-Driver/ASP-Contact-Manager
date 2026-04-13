@@ -5,9 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ContactManager.Controllers
 {
+
     [ApiController]
     [Route("[controller]")]
-    public class ContactController : Controller
+    public class ContactController : ControllerBase
     {
         private readonly IContactService _contactService;
         // DI to connect service layer
@@ -19,13 +20,13 @@ namespace ContactManager.Controllers
         [HttpGet("GetAll")]
         public IActionResult GetAll()
         {
-            return Json(_contactService.GetAll());
+            return Ok(_contactService.GetAll());
         }
 
         [HttpGet("GetById/{id:guid}")]
         public IActionResult GetById([FromRoute] Guid id)
         {
-            return Json(_contactService.GetById(id));   // If it couldn't be added we return the null
+            return Ok(_contactService.GetById(id));   // If it couldn't be added we return the null
         }
 
         [HttpPost("Add")]
@@ -34,7 +35,7 @@ namespace ContactManager.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var newContact = _contactService.Add(contact);
             if (newContact == null) return BadRequest("Could not create contact.");
-            return Json(newContact);
+            return Ok(newContact);
         }
 
         [HttpPut("Update")]
@@ -55,7 +56,7 @@ namespace ContactManager.Controllers
         public IActionResult Search([FromQuery] string query, [FromQuery] int page, [FromQuery] int size)
         {
             if (page < 0 || size < 1) return BadRequest("Error: Page must be greater than 0 and size must be greater than 1.");
-            return Json(_contactService.Search(query, page, size));
+            return Ok(_contactService.Search(query, page, size));
         }
     }
 }

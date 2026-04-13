@@ -7,7 +7,7 @@ interface Contact {
     phone?: string;
 }
 // Keep a stateful copy of contacts
-let currentContacts:Array<Contact> = [];
+let currentContacts: Array<Contact> = [];
 
 function renderTable(contacts: Array<Contact>) {
     const tableBody = document.getElementById('contactTableBody');
@@ -87,11 +87,11 @@ async function tryAddNewContact(event: Event) {
     clearErrors();
 
     // Grab the info
-    const newContact: Contact = {// @ts-ignore
-        firstName: document.getElementById("firstName").value,// @ts-ignore
-        lastName: document.getElementById("lastName").value,// @ts-ignore
-        email: document.getElementById("email").value,// @ts-ignore
-        phone: document.getElementById("phone").value
+    const newContact: Contact = {
+        firstName: (<HTMLInputElement>document.getElementById("firstName")).value,
+        lastName: (<HTMLInputElement>document.getElementById("lastName")).value,
+        email: (<HTMLInputElement>document.getElementById("email")).value,
+        phone: (<HTMLInputElement>document.getElementById("phone")).value
     }
 
     // POST the request
@@ -106,8 +106,7 @@ async function tryAddNewContact(event: Event) {
 
     if (response.ok) {
         // Response good to we add it
-        // @ts-ignore
-        document.getElementById("addContactForm").reset();
+        (<HTMLFormElement>document.getElementById("addContactForm")).reset();
         loadContacts();
     } else if (response.status === 400) {
         // Since we used ModelState errors and named our form fields the same, we can just pass it right back
@@ -136,12 +135,13 @@ function showUpdateModal(show: boolean, id?:string) {
     if (id) {
         const contact = currentContacts.find(c => c.id == id);  // Grab it from our list
 
-        // @ts-ignore
-        document.getElementById("updateContactForm").dataset.id = contact.id; // @ts-ignore Inject the Id for grabbing info in method below
-        document.getElementById("update-firstName").value = contact.firstName; // @ts-ignore
-        document.getElementById("update-lastName").value = contact.lastName; // @ts-ignore
-        document.getElementById("update-email").value = contact.email; // @ts-ignore
-        document.getElementById("update-phone").value = contact.phone;
+        if (!contact) return;
+
+        (<HTMLFormElement>document.getElementById("updateContactForm")).dataset.id = contact.id; // Inject the Id for grabbing info in method below
+        (<HTMLInputElement>document.getElementById("update-firstName")).value = contact.firstName;
+        (<HTMLInputElement>document.getElementById("update-lastName")).value = contact.lastName ? contact.lastName : "";
+        (<HTMLInputElement>document.getElementById("update-email")).value = <string>contact.email;
+        (<HTMLInputElement>document.getElementById("update-phone")).value = <string>contact.phone;
     }
 
     modal.style.display = show ? 'block' : 'none';
@@ -152,12 +152,12 @@ async function tryUpdateContact(event: Event) {
     clearErrors();
 
     // Grab the info
-    const newContact: Contact = {// @ts-ignore
-        id: document.getElementById("updateContactForm").dataset.id, // @ts-ignore
-        firstName: document.getElementById("update-firstName").value,// @ts-ignore
-        lastName: document.getElementById("update-lastName").value,// @ts-ignore
-        email: document.getElementById("update-email").value,// @ts-ignore
-        phone: document.getElementById("update-phone").value
+    const newContact: Contact = {
+        id: (<HTMLFormElement>document.getElementById("updateContactForm")).dataset.id,
+        firstName: (<HTMLInputElement>document.getElementById("update-firstName")).value,
+        lastName: (<HTMLInputElement>document.getElementById("update-lastName")).value,
+        email: (<HTMLInputElement>document.getElementById("update-email")).value,
+        phone: (<HTMLInputElement>document.getElementById("update-phone")).value
     }
 
     // POST the request
@@ -173,8 +173,7 @@ async function tryUpdateContact(event: Event) {
     if (response.ok) {
         // Response good so we reload the list
         showUpdateModal(false);
-        // @ts-ignore
-        document.getElementById("updateContactForm").reset();
+        (<HTMLFormElement>document.getElementById("updateContactForm")).reset();
         loadContacts();
     } else if (response.status === 400) {
         // Since we used ModelState errors and named our form fields the same, we can just pass it right back
@@ -198,28 +197,37 @@ function displayErrors(errorData, inUpdate?:boolean) {
 }
 
 function clearErrors() {
-    // @ts-ignore
-    document.querySelectorAll(".text-danger").forEach(element => element.innerText = "");
+    document.querySelectorAll(".text-danger").forEach(element => (<HTMLDivElement>element).innerText = "");
 }
 
 document.addEventListener("DOMContentLoaded", () => {
     loadContacts();
 
-    // @ts-ignore
-    document.getElementById("addContactForm").addEventListener("submit", tryAddNewContact);
-    // @ts-ignore
-    document.getElementById("updateContactForm").addEventListener("submit", tryUpdateContact);
-    // @ts-ignore
-    document.getElementById("cancelUpdateButton").addEventListener("click", () => { showUpdateModal(false) });
+    (<HTMLFormElement>document.getElementById("addContactForm")).addEventListener("submit", tryAddNewContact);
+    (<HTMLFormElement>document.getElementById("updateContactForm")).addEventListener("submit", tryUpdateContact);
+    (<HTMLButtonElement>document.getElementById("cancelUpdateButton")).addEventListener("click", () => { showUpdateModal(false) });
 
     // Debounce the search obviously
     let searchDebounceTime;
-    // @ts-ignore
-    document.getElementById("searchInput").addEventListener("input", (e) => {
+    (<HTMLInputElement>document.getElementById("searchInput")).addEventListener("input", (e:Event) => {
         clearTimeout(searchDebounceTime);
         searchDebounceTime = setTimeout(() => {
-            // @ts-ignore
-            searchContacts(e.target.value);
+            searchContacts((<HTMLInputElement>e.target).value);
         }, 300)
     })
 })
+
+// =================================
+// ====== DOCUMENTATION STUFF ======
+// =================================
+
+async function loadDocs() {
+    const response = await fetch("Documentation", { method: 'GET' });
+    if (response.ok) {
+        const html = await response.text();
+        console.log(html);
+        (<HTMLDivElement>document.getElementById("documentation-container")).innerHTML = html;
+    } else {
+        (<HTMLDivElement>document.getElementById("documentation-container")).innerHTML = "<p class='text-danger'>Failed to load docs.</p>";
+    }
+}

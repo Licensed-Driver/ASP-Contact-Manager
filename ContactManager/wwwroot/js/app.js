@@ -65,9 +65,9 @@ function tryAddNewContact(event) {
         clearErrors();
         // Grab the info
         const newContact = {
-            firstName: document.getElementById("firstName").value, // @ts-ignore
-            lastName: document.getElementById("lastName").value, // @ts-ignore
-            email: document.getElementById("email").value, // @ts-ignore
+            firstName: document.getElementById("firstName").value,
+            lastName: document.getElementById("lastName").value,
+            email: document.getElementById("email").value,
             phone: document.getElementById("phone").value
         };
         // POST the request
@@ -80,7 +80,6 @@ function tryAddNewContact(event) {
         });
         if (response.ok) {
             // Response good to we add it
-            // @ts-ignore
             document.getElementById("addContactForm").reset();
             loadContacts();
         }
@@ -111,11 +110,12 @@ function showUpdateModal(show, id) {
     // Set the values to the current values of provided contact
     if (id) {
         const contact = currentContacts.find(c => c.id == id); // Grab it from our list
-        // @ts-ignore
-        document.getElementById("updateContactForm").dataset.id = contact.id; // @ts-ignore Inject the Id for grabbing info in method below
-        document.getElementById("update-firstName").value = contact.firstName; // @ts-ignore
-        document.getElementById("update-lastName").value = contact.lastName; // @ts-ignore
-        document.getElementById("update-email").value = contact.email; // @ts-ignore
+        if (!contact)
+            return;
+        document.getElementById("updateContactForm").dataset.id = contact.id; // Inject the Id for grabbing info in method below
+        document.getElementById("update-firstName").value = contact.firstName;
+        document.getElementById("update-lastName").value = contact.lastName ? contact.lastName : "";
+        document.getElementById("update-email").value = contact.email;
         document.getElementById("update-phone").value = contact.phone;
     }
     modal.style.display = show ? 'block' : 'none';
@@ -126,10 +126,10 @@ function tryUpdateContact(event) {
         clearErrors();
         // Grab the info
         const newContact = {
-            id: document.getElementById("updateContactForm").dataset.id, // @ts-ignore
-            firstName: document.getElementById("update-firstName").value, // @ts-ignore
-            lastName: document.getElementById("update-lastName").value, // @ts-ignore
-            email: document.getElementById("update-email").value, // @ts-ignore
+            id: document.getElementById("updateContactForm").dataset.id,
+            firstName: document.getElementById("update-firstName").value,
+            lastName: document.getElementById("update-lastName").value,
+            email: document.getElementById("update-email").value,
             phone: document.getElementById("update-phone").value
         };
         // POST the request
@@ -143,7 +143,6 @@ function tryUpdateContact(event) {
         if (response.ok) {
             // Response good so we reload the list
             showUpdateModal(false);
-            // @ts-ignore
             document.getElementById("updateContactForm").reset();
             loadContacts();
         }
@@ -171,26 +170,36 @@ function displayErrors(errorData, inUpdate) {
     }
 }
 function clearErrors() {
-    // @ts-ignore
     document.querySelectorAll(".text-danger").forEach(element => element.innerText = "");
 }
 document.addEventListener("DOMContentLoaded", () => {
     loadContacts();
-    // @ts-ignore
     document.getElementById("addContactForm").addEventListener("submit", tryAddNewContact);
-    // @ts-ignore
     document.getElementById("updateContactForm").addEventListener("submit", tryUpdateContact);
-    // @ts-ignore
     document.getElementById("cancelUpdateButton").addEventListener("click", () => { showUpdateModal(false); });
     // Debounce the search obviously
     let searchDebounceTime;
-    // @ts-ignore
     document.getElementById("searchInput").addEventListener("input", (e) => {
         clearTimeout(searchDebounceTime);
         searchDebounceTime = setTimeout(() => {
-            // @ts-ignore
             searchContacts(e.target.value);
         }, 300);
     });
 });
+// =================================
+// ====== DOCUMENTATION STUFF ======
+// =================================
+function loadDocs() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield fetch("Documentation", { method: 'GET' });
+        if (response.ok) {
+            const html = yield response.text();
+            console.log(html);
+            document.getElementById("documentation-container").innerHTML = html;
+        }
+        else {
+            document.getElementById("documentation-container").innerHTML = "<p class='text-danger'>Failed to load docs.</p>";
+        }
+    });
+}
 //# sourceMappingURL=app.js.map

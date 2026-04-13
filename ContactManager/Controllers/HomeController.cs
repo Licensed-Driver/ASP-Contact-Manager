@@ -18,7 +18,7 @@ namespace ContactManager.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Documentation()
         {
             return View();
         }

@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 class UpdateContactModal extends HTMLElement {
     constructor() {
         super();
@@ -43,5 +52,25 @@ class UpdateContactModal extends HTMLElement {
             </div>`;
     }
 }
+class Documentation extends HTMLElement {
+    constructor() {
+        super();
+    }
+    connectedCallback() {
+        const getContent = () => __awaiter(this, void 0, void 0, function* () {
+            const response = yield fetch("/Documentation", { method: 'GET' });
+            if (response.ok) {
+                const html = yield response.text();
+                console.log(html);
+                this.innerHTML = html;
+            }
+            else {
+                this.innerHTML = "<p class='text-danger'>Failed to load docs.</p>";
+            }
+        });
+        getContent();
+    }
+}
 customElements.define('update-contact-modal', UpdateContactModal);
+customElements.define('documentation-container', Documentation);
 //# sourceMappingURL=elements.js.map

@@ -46,4 +46,26 @@ class UpdateContactModal extends HTMLElement {
     }
 }
 
+class Documentation extends HTMLElement {
+    constructor() {
+        super();
+    }
+
+    connectedCallback() {
+        const getContent = async () => {
+            const response = await fetch("/Documentation", { method: 'GET' });
+            if (response.ok) {
+                const html = await response.text();
+                console.log(html);
+                this.innerHTML = html;
+            } else {
+                this.innerHTML = "<p class='text-danger'>Failed to load docs.</p>";
+            }
+        }
+
+        getContent();
+    }
+}
+
 customElements.define('update-contact-modal', UpdateContactModal);
+customElements.define('documentation-container', Documentation);
