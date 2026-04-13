@@ -44,7 +44,7 @@ namespace ContactManager.Services
             MathF.Max((c.LastName != null ? Levenshtein.PercentDiff(c.LastName, query) : 0.0f),
             MathF.Max((c.Email != null ? Levenshtein.PercentDiff(c.Email, query) : 0.0f),
             Levenshtein.PercentDiff($"{c.FirstName} {c.LastName}", query)
-            )))).Skip((page-1)*size).Take(size);  // Paginated so that we aren't always getting all
+            )))).Skip(page * size).Take(size);  // Paginated so that we aren't always getting all
         }
     }
 }

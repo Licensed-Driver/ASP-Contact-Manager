@@ -55,7 +55,7 @@ namespace ContactManager.Controllers
         [HttpGet("Search")]
         public IActionResult Search([FromQuery] string query, [FromQuery] int page, [FromQuery] int size)
         {
-            if (page < 0 || size < 1) return BadRequest("Error: Page must be greater than 0 and size must be greater than 1.");
+            if (page < 0 || size < 1) return BadRequest("Error: Page must be non-negative and size must be at least 1.");
             return Ok(_contactService.Search(query, page, size));
         }
     }

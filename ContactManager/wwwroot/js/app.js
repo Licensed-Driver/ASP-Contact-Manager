@@ -186,20 +186,4 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 300);
     });
 });
-// =================================
-// ====== DOCUMENTATION STUFF ======
-// =================================
-function loadDocs() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const response = yield fetch("Documentation", { method: 'GET' });
-        if (response.ok) {
-            const html = yield response.text();
-            console.log(html);
-            document.getElementById("documentation-container").innerHTML = html;
-        }
-        else {
-            document.getElementById("documentation-container").innerHTML = "<p class='text-danger'>Failed to load docs.</p>";
-        }
-    });
-}
 //# sourceMappingURL=app.js.map

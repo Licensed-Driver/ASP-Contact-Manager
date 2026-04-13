@@ -177,8 +177,8 @@ namespace Tests
                 service.Add(new Contact { FirstName = $"User{Math.Pow(10, i)}" });
             }
 
-            var page0 = service.Search("User", 1, 2).ToList();
-            var page1 = service.Search("User", 2, 2).ToList();
+            var page0 = service.Search("User", 0, 2).ToList();
+            var page1 = service.Search("User", 1, 2).ToList();
 
             Assert.Equal(2, page0.Count);
             Assert.Equal(2, page1.Count);

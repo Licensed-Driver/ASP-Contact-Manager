@@ -216,18 +216,3 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 300)
     })
 })
-
-// =================================
-// ====== DOCUMENTATION STUFF ======
-// =================================
-
-async function loadDocs() {
-    const response = await fetch("Documentation", { method: 'GET' });
-    if (response.ok) {
-        const html = await response.text();
-        console.log(html);
-        (<HTMLDivElement>document.getElementById("documentation-container")).innerHTML = html;
-    } else {
-        (<HTMLDivElement>document.getElementById("documentation-container")).innerHTML = "<p class='text-danger'>Failed to load docs.</p>";
-    }
-}

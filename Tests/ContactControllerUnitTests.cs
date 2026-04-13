@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -32,11 +32,11 @@ namespace Tests
 
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
-            _mockService.Verify(s => s.Add(It.IsAny<Contact>()), Times.Never); 
+            _mockService.Verify(s => s.Add(It.IsAny<Contact>()), Times.Never);
         }
 
         [Fact]
-        public void Add_ValidModel_ReturnsJsonResult()
+        public void Add_ValidModel_ReturnsOk()
         {
             var contact = new Contact { FirstName = "Valid" };
             // Tell the mock what to return when Add is called
@@ -44,8 +44,8 @@ namespace Tests
 
             var result = _controller.Add(contact);
 
-            var jsonResult = Assert.IsType<JsonResult>(result);
-            Assert.Equal(contact, jsonResult.Value);
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(contact, okResult.Value);
         }
 
         [Fact]
@@ -72,7 +72,7 @@ namespace Tests
         }
 
         [Fact]
-        public void GetAll_ReturnsJsonWithAllContacts()
+        public void GetAll_ReturnsOkWithAllContacts()
         {
             var contacts = new List<Contact>
             {
@@ -83,24 +83,24 @@ namespace Tests
 
             var result = _controller.GetAll();
 
-            var jsonResult = Assert.IsType<JsonResult>(result);
-            Assert.Equal(contacts, jsonResult.Value);
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(contacts, okResult.Value);
         }
 
         [Fact]
-        public void GetAll_EmptyList_ReturnsJsonEmptyList()
+        public void GetAll_EmptyList_ReturnsOkEmptyList()
         {
             _mockService.Setup(s => s.GetAll()).Returns(new List<Contact>());
 
             var result = _controller.GetAll();
 
-            var jsonResult = Assert.IsType<JsonResult>(result);
-            var value = Assert.IsAssignableFrom<IEnumerable<Contact>>(jsonResult.Value);
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var value = Assert.IsAssignableFrom<IEnumerable<Contact>>(okResult.Value);
             Assert.Empty(value);
         }
 
         [Fact]
-        public void GetById_ExistingId_ReturnsJsonContact()
+        public void GetById_ExistingId_ReturnsOkContact()
         {
             var id = Guid.NewGuid();
             var contact = new Contact { Id = id, FirstName = "Alice", Email = "alice@example.com" };
@@ -108,20 +108,20 @@ namespace Tests
 
             var result = _controller.GetById(id);
 
-            var jsonResult = Assert.IsType<JsonResult>(result);
-            Assert.Equal(contact, jsonResult.Value);
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(contact, okResult.Value);
         }
 
         [Fact]
-        public void GetById_MissingId_ReturnsJsonNull()
+        public void GetById_MissingId_ReturnsOkNull()
         {
             var id = Guid.NewGuid();
             _mockService.Setup(s => s.GetById(id)).Returns((Contact?)null);
 
             var result = _controller.GetById(id);
 
-            var jsonResult = Assert.IsType<JsonResult>(result);
-            Assert.Null(jsonResult.Value);
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Null(okResult.Value);
         }
 
         [Fact]
@@ -159,7 +159,7 @@ namespace Tests
         }
 
         [Fact]
-        public void Search_ValidParameters_ReturnsJsonResults()
+        public void Search_ValidParameters_ReturnsOkResults()
         {
             var contacts = new List<Contact>
             {
@@ -169,8 +169,8 @@ namespace Tests
 
             var result = _controller.Search("Alice", 0, 10);
 
-            var jsonResult = Assert.IsType<JsonResult>(result);
-            Assert.Equal(contacts, jsonResult.Value);
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(contacts, okResult.Value);
         }
 
         [Fact]
@@ -192,14 +192,14 @@ namespace Tests
         }
 
         [Fact]
-        public void Search_NullQuery_ReturnsJsonResults()
+        public void Search_NullQuery_ReturnsOkResults()
         {
             var contacts = new List<Contact>();
             _mockService.Setup(s => s.Search(null, 0, 10)).Returns(contacts);
 
             var result = _controller.Search(null, 0, 10);
 
-            Assert.IsType<JsonResult>(result);
+            Assert.IsType<OkObjectResult>(result);
         }
     }
 }
